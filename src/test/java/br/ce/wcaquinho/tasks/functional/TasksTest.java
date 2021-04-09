@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class TasksTest {
 
     //Caminho onde fica o executável do chromedrive
-    private static final String PATH_CHROME_DRIVER = "";
+    private static final String PATH_CHROME_DRIVER = "/Users/marcos.camara/Devtools/devops_pipeline/chromedriver";
     private static final String URL = "http://localhost:8001/tasks";
 
     public WebDriver createWebDriver(){
