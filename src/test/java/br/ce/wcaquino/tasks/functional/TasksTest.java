@@ -47,7 +47,7 @@ public class TasksTest {
             driver.findElement(By.id("addTodo")).click();
 
             //Escrever a descrição
-            driver.findElement(By.id("tasks")).sendKeys("Teste via Selenium");
+            driver.findElement(By.id("task")).sendKeys("Teste via Selenium");
 
             //Escrever a data
             driver.findElement(By.id("dueDate")).sendKeys("10/10/2022");
