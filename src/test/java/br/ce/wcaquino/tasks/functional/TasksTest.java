@@ -90,7 +90,7 @@ public class TasksTest {
     }
 
     @Test
-    public void naoDeveSalvarTarefaSemData() throws MalformedURLException {
+    public void naoDeveSalvarTarefaSemData() throws MalformedURLException, InterruptedException {
 
         WebDriver driver = createWebDriver();
 
@@ -104,7 +104,7 @@ public class TasksTest {
 
             //Clicar em salvar
             driver.findElement(By.id("saveButton")).click();
-
+            Thread.sleep(2000);
             //Validar mensagem de sucesso
             String message = driver.findElement(By.id("message")).getText();
             Assert.assertEquals("Fill the due date", message);
