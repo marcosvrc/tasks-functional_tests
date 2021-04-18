@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -18,14 +17,31 @@ public class TasksTest {
     private static final String PATH_CHROME_DRIVER = "/Users/marcos.camara/Devtools/devops_pipeline/chromedriver";
     private static final String URL = "http://192.168.15.28:8001/tasks";
 
-    public WebDriver createWebDriver() throws MalformedURLException {
-        //O ideal é configurar a variável de ambiente na máquina
-        // A solução aqui utiliza o chromedriver local
-        //System.setProperty("webdriver.chrome.driver", PATH_CHROME_DRIVER);
+    //Fields e Buttons
+    private static final String ID_FIELD_TASK = "task";
+    private static final String ID_FIELD_DATE = "dueDate";
+    private static final String ID_BUTTON_SAVE = "saveButton";
+    private static final String ID_BUTTON_ADD = "addTodo";
+    private static final String ID_FIELD_MESSAGE = "message";
 
-        //WebDriver driver = new ChromeDriver();
-        //driver.navigate().to(URL);
-        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    //PATH
+    private static final String PATH_BUTTON_DELETE = "//a[@class='btn btn-outline-danger btn-sm";
+
+    //Messages
+    private static final String MSG_SUCCESS = "Success!";
+    private static final String MSG_ERROR_FIELD_TASK_EMPTY = "Fill the task description";
+    private static final String MSG_ERROR_FIELD_DATE_EMPTY = "Fill the due date";
+    private static final String MSG_ERROR_DATE_PAST = "Due date must not be in past";
+
+
+    public WebDriver createWebDriver() throws MalformedURLException {
+        /*O ideal é configurar a variável de ambiente na máquina
+         A solução aqui utiliza o chromedriver local
+        System.setProperty("webdriver.chrome.driver", PATH_CHROME_DRIVER);
+
+        WebDriver driver = new ChromeDriver();
+        driver.navigate().to(URL);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);*/
 
         /* A solução aqui utiliza um servidor */
         DesiredCapabilities cap = DesiredCapabilities.chrome();
@@ -37,27 +53,28 @@ public class TasksTest {
     }
 
     @Test
-    public void deveSalvarTaskComSucesso() throws MalformedURLException {
+    public void deveSalvarTaskComSucesso() throws MalformedURLException, InterruptedException {
 
         WebDriver driver = createWebDriver();
 
         try{
 
             //Clicar em AddTodo
-            driver.findElement(By.id("addTodo")).click();
+            driver.findElement(By.id(ID_BUTTON_ADD)).click();
 
             //Escrever a descrição
-            driver.findElement(By.id("task")).sendKeys("Teste via Selenium");
+            driver.findElement(By.id(ID_FIELD_TASK)).sendKeys("Teste via Selenium");
 
             //Escrever a data
-            driver.findElement(By.id("dueDate")).sendKeys("10/10/2022");
+            driver.findElement(By.id(ID_FIELD_DATE)).sendKeys("10/10/2022");
 
             //Clicar em salvar
-            driver.findElement(By.id("saveButton")).click();
+            driver.findElement(By.id(ID_BUTTON_SAVE)).click();
+            Thread.sleep(2000);
 
             //Validar mensagem de sucesso
-            String message = driver.findElement(By.id("message")).getText();
-            Assert.assertEquals("Success!", message);
+            String message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_SUCCESS, message);
         }finally {
             //Fecha o browser
             driver.quit();
@@ -65,24 +82,25 @@ public class TasksTest {
     }
 
     @Test
-    public void naoDeveSalvarTarefaSemDescricao() throws MalformedURLException {
+    public void naoDeveSalvarTarefaSemDescricao() throws MalformedURLException, InterruptedException {
 
         WebDriver driver = createWebDriver();
 
         try{
 
             //Clicar em AddTodo
-            driver.findElement(By.id("addTodo")).click();
+            driver.findElement(By.id(ID_BUTTON_ADD)).click();
 
             //Escrever a data
-            driver.findElement(By.id("dueDate")).sendKeys("10/10/2022");
+            driver.findElement(By.id(ID_FIELD_DATE)).sendKeys("10/10/2022");
 
             //Clicar em salvar
-            driver.findElement(By.id("saveButton")).click();
+            driver.findElement(By.id(ID_BUTTON_SAVE)).click();
+            Thread.sleep(2000);
 
             //Validar mensagem de sucesso
-            String message = driver.findElement(By.id("message")).getText();
-            Assert.assertEquals("Fill the task description", message);
+            String message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_ERROR_FIELD_TASK_EMPTY, message);
         }finally {
             //Fecha o browser
             driver.quit();
@@ -97,17 +115,17 @@ public class TasksTest {
         try{
 
             //Clicar em AddTodo
-            driver.findElement(By.id("addTodo")).click();
+            driver.findElement(By.id(ID_BUTTON_ADD)).click();
 
             //Escrever a descrição
-            driver.findElement(By.id("task")).sendKeys("Teste via Selenium");
+            driver.findElement(By.id(ID_FIELD_TASK)).sendKeys("Teste via Selenium");
 
             //Clicar em salvar
-            driver.findElement(By.id("saveButton")).click();
+            driver.findElement(By.id(ID_BUTTON_SAVE)).click();
             Thread.sleep(2000);
             //Validar mensagem de sucesso
-            String message = driver.findElement(By.id("message")).getText();
-            Assert.assertEquals("Fill the due date", message);
+            String message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_ERROR_FIELD_DATE_EMPTY, message);
         }finally {
             //Fecha o browser
             driver.quit();
@@ -115,32 +133,63 @@ public class TasksTest {
     }
 
     @Test
-    public void naoDeveSalvarTarefaComDataPassada() throws MalformedURLException {
+    public void naoDeveSalvarTarefaComDataPassada() throws MalformedURLException, InterruptedException {
 
         WebDriver driver = createWebDriver();
 
         try{
 
             //Clicar em AddTodo
-            driver.findElement(By.id("addTodo")).click();
+            driver.findElement(By.id(ID_BUTTON_ADD)).click();
 
             //Escrever a descrição
-            driver.findElement(By.id("task")).sendKeys("Teste via Selenium");
+            driver.findElement(By.id(ID_FIELD_TASK)).sendKeys("Teste via Selenium");
 
             //Escrever a data
-            driver.findElement(By.id("dueDate")).sendKeys("10/10/2019");
+            driver.findElement(By.id(ID_FIELD_DATE)).sendKeys("10/10/2019");
 
             //Clicar em salvar
-            driver.findElement(By.id("saveButton")).click();
+            driver.findElement(By.id(ID_BUTTON_SAVE)).click();
+            Thread.sleep(2000);
 
             //Validar mensagem de sucesso
-            String message = driver.findElement(By.id("message")).getText();
-            Assert.assertEquals("Due date must not be in past", message);
+            String message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_ERROR_DATE_PAST, message);
         }finally {
             //Fecha o browser
             driver.quit();
         }
     }
+
+    /*@Test
+    public void deveRemoverTarefaComSucesso() throws MalformedURLException {
+
+        WebDriver driver = createWebDriver();
+
+        try{
+
+            //Clicar em AddTodo
+            driver.findElement(By.id(ID_BUTTON_ADD)).click();
+            //Escrever a descrição
+            driver.findElement(By.id(ID_FIELD_TASK)).sendKeys("Teste via Selenium");
+            //Escrever a data
+            driver.findElement(By.id(ID_FIELD_DATE)).sendKeys("10/10/2022");
+            //Clicar em salvar
+            driver.findElement(By.id(ID_BUTTON_SAVE)).click();
+
+            //Validar mensagem de sucesso
+            String message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_SUCCESS, message);
+
+            //Remove tarefa
+            driver.findElement((By.xpath(PATH_BUTTON_DELETE))).click();
+            message = driver.findElement(By.id(ID_FIELD_MESSAGE)).getText();
+            Assert.assertEquals(MSG_SUCCESS, message);
+        }finally {
+            //Fecha o browser
+            driver.quit();
+        }
+    }*/
 
 
 }
